@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { useCreateTicket, useDeleteTicket, useUpdateTicket } from '../hooks/useTickets'
 import { useCategories, useProfiles, useRequesters } from '../hooks/useReferenceData'
+import { useAssets } from '../hooks/useAssets'
+import { useBackupJobs, useSuppliers } from '../hooks/useOperations'
 import { PRIORITY_LABELS, STATUS_LABELS, STATUS_ORDER, TYPE_LABELS } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
 import type { TicketPriority, TicketStatus, TicketType, TicketWithRelations } from '../types/database'
@@ -17,6 +19,9 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
   const { data: categories } = useCategories()
   const { data: requesters } = useRequesters()
   const { data: profiles } = useProfiles()
+  const { data: assets } = useAssets()
+  const { data: suppliers } = useSuppliers()
+  const { data: backupJobs } = useBackupJobs()
   const createTicket = useCreateTicket()
   const updateTicket = useUpdateTicket()
   const deleteTicket = useDeleteTicket()
@@ -29,6 +34,9 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
   const [categoryId, setCategoryId] = useState(ticket?.category_id ?? '')
   const [requesterId, setRequesterId] = useState(ticket?.requester_id ?? '')
   const [assignedTo, setAssignedTo] = useState(ticket?.assigned_to ?? '')
+  const [assetId, setAssetId] = useState(ticket?.asset_id ?? '')
+  const [supplierId, setSupplierId] = useState(ticket?.supplier_id ?? '')
+  const [backupJobId, setBackupJobId] = useState(ticket?.backup_job_id ?? '')
   const [dueDate, setDueDate] = useState(ticket?.due_date ?? '')
   const [plannedDate, setPlannedDate] = useState(ticket?.planned_date ?? '')
   const [estimatedMinutes, setEstimatedMinutes] = useState(ticket?.estimated_minutes?.toString() ?? '')
@@ -50,6 +58,9 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
       category_id: categoryId || null,
       requester_id: requesterId || null,
       assigned_to: assignedTo || null,
+      asset_id: assetId || null,
+      supplier_id: supplierId || null,
+      backup_job_id: backupJobId || null,
       due_date: dueDate || null,
       planned_date: plannedDate || null,
       estimated_minutes: estimatedMinutes ? Number(estimatedMinutes) : null,
@@ -156,6 +167,37 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={labelClass} htmlFor="asset">Actiu relacionat</label>
+            <select id="asset" value={assetId} onChange={(e) => setAssetId(e.target.value)} className={inputClass}>
+              <option value="">Sense especificar</option>
+              {assets?.map((a) => (
+                <option key={a.id} value={a.id}>{a.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass} htmlFor="supplier">Proveïdor relacionat</label>
+            <select id="supplier" value={supplierId} onChange={(e) => setSupplierId(e.target.value)} className={inputClass}>
+              <option value="">Sense especificar</option>
+              {suppliers?.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="backupJob">Backup relacionat</label>
+          <select id="backupJob" value={backupJobId} onChange={(e) => setBackupJobId(e.target.value)} className={inputClass}>
+            <option value="">Sense especificar</option>
+            {backupJobs?.map((b) => (
+              <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

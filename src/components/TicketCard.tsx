@@ -41,6 +41,7 @@ export function TicketCard({ ticket, onClick }: { ticket: TicketWithRelations; o
           </span>
         )}
         {ticket.requester && <span>· {ticket.requester.name}</span>}
+        {ticket.asset && <span>· {ticket.asset.name}</span>}
         {ticket.due_date && <span>· venç {ticket.due_date}</span>}
       </div>
     </div>

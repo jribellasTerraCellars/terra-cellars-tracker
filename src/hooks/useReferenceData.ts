@@ -37,6 +37,17 @@ export function useUpdateRequester() {
   })
 }
 
+export function useDeleteRequester() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('requesters').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['requesters'] }),
+  })
+}
+
 export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
@@ -53,6 +64,18 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: async (category: Partial<Category> & { name: string }) => {
       const { data, error } = await supabase.from('categories').insert(category).select().single()
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  })
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, changes }: { id: string; changes: Partial<Category> }) => {
+      const { data, error } = await supabase.from('categories').update(changes).eq('id', id).select().single()
       if (error) throw error
       return data
     },
