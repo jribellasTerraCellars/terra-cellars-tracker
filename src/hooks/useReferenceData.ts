@@ -37,6 +37,17 @@ export function useUpdateRequester() {
   })
 }
 
+export function useDeleteRequester() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('requesters').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['requesters'] }),
+  })
+}
+
 export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
