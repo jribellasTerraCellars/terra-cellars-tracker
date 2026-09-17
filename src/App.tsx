@@ -6,6 +6,8 @@ import { Login } from './pages/Login'
 import { Dashboard } from './pages/Dashboard'
 import { Stats } from './pages/Stats'
 import { Settings } from './pages/Settings'
+import { Assets } from './pages/Assets'
+import { Operations } from './pages/Operations'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth()
@@ -34,6 +36,22 @@ export default function App() {
         element={
           <RequireAuth>
             <Dashboard />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/actius"
+        element={
+          <RequireAuth>
+            <Assets />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/operacions"
+        element={
+          <RequireAuth>
+            <Operations />
           </RequireAuth>
         }
       />

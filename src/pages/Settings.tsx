@@ -8,7 +8,8 @@ import {
   useRequesters,
   useUpdateRequester,
 } from '../hooks/useReferenceData'
-import type { Requester } from '../types/database'
+import { EMPLOYMENT_STATUS_LABELS, EMPLOYMENT_STATUS_ORDER } from '../lib/constants'
+import type { EmploymentStatus, Requester } from '../types/database'
 
 export function Settings() {
   return (
@@ -47,9 +48,10 @@ function RequestersPanel() {
 
   return (
     <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-      <h2 className="mb-1 text-sm font-semibold">Usuaris interns (sol·licitants)</h2>
+      <h2 className="mb-1 text-sm font-semibold">Empleats</h2>
       <p className="mb-4 text-xs text-[var(--color-text-muted)]">
-        Persones de l'empresa que poden demanar tasques o reportar incidències.
+        Persones de l'empresa que poden demanar tasques o reportar incidències. Edita'ls per afegir càrrec,
+        usuari d'AD o dates d'alta/baixa.
       </p>
 
       <form onSubmit={handleSubmit} className="mb-4 flex flex-wrap gap-2">
@@ -83,8 +85,15 @@ function RequestersPanel() {
           ) : (
             <li key={r.id} className="flex items-center justify-between gap-2 py-2 text-sm">
               <div>
-                <p className={!r.active ? 'text-[var(--color-text-muted)] line-through' : ''}>{r.name}</p>
-                {r.department && <p className="text-xs text-[var(--color-text-muted)]">{r.department}</p>}
+                <div className="flex items-center gap-2">
+                  <p className={!r.active ? 'text-[var(--color-text-muted)] line-through' : ''}>{r.name}</p>
+                  <span className="rounded-full bg-[var(--color-surface-alt)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-muted)]">
+                    {EMPLOYMENT_STATUS_LABELS[r.employment_status]}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  {[r.department, r.position].filter(Boolean).join(' · ') || '—'}
+                </p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <button
@@ -125,20 +134,46 @@ function RequesterEditRow({
 }) {
   const [name, setName] = useState(requester.name)
   const [department, setDepartment] = useState(requester.department ?? '')
+  const [position, setPosition] = useState(requester.position ?? '')
+  const [adUsername, setAdUsername] = useState(requester.ad_username ?? '')
+  const [startDate, setStartDate] = useState(requester.start_date ?? '')
+  const [endDate, setEndDate] = useState(requester.end_date ?? '')
+  const [employmentStatus, setEmploymentStatus] = useState<EmploymentStatus>(requester.employment_status)
 
   const inputClass =
     'flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 text-sm outline-none focus:border-[var(--color-primary)]'
 
   return (
-    <li className="flex flex-wrap items-center gap-2 py-2 text-sm">
-      <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
-      <input
-        value={department}
-        onChange={(e) => setDepartment(e.target.value)}
-        placeholder="Departament (opcional)"
-        className={inputClass}
-      />
-      <div className="flex shrink-0 gap-2">
+    <li className="flex flex-col gap-2 py-3 text-sm">
+      <div className="flex flex-wrap gap-2">
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nom" className={inputClass} />
+        <input
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          placeholder="Departament"
+          className={inputClass}
+        />
+        <input value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Càrrec" className={inputClass} />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <input value={adUsername} onChange={(e) => setAdUsername(e.target.value)} placeholder="Usuari AD" className={inputClass} />
+        <select
+          value={employmentStatus}
+          onChange={(e) => setEmploymentStatus(e.target.value as EmploymentStatus)}
+          className={inputClass}
+        >
+          {EMPLOYMENT_STATUS_ORDER.map((value) => (
+            <option key={value} value={value}>{EMPLOYMENT_STATUS_LABELS[value]}</option>
+          ))}
+        </select>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="text-xs text-[var(--color-text-muted)]">Alta</label>
+        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
+        <label className="text-xs text-[var(--color-text-muted)]">Baixa</label>
+        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
+      </div>
+      <div className="flex shrink-0 justify-end gap-2">
         <button
           onClick={onCancel}
           className="rounded-md border border-[var(--color-border)] px-2 py-1 text-xs font-medium hover:bg-[var(--color-surface-alt)]"
@@ -146,7 +181,17 @@ function RequesterEditRow({
           Cancel·lar
         </button>
         <button
-          onClick={() => onSave({ name: name.trim(), department: department.trim() || null })}
+          onClick={() =>
+            onSave({
+              name: name.trim(),
+              department: department.trim() || null,
+              position: position.trim() || null,
+              ad_username: adUsername.trim() || null,
+              start_date: startDate || null,
+              end_date: endDate || null,
+              employment_status: employmentStatus,
+            })
+          }
           disabled={!name.trim()}
           className="rounded-md bg-[var(--color-primary)] px-2 py-1 text-xs font-medium text-[var(--color-primary-contrast)] hover:opacity-90 disabled:opacity-60"
         >

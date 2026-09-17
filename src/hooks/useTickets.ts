@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import type { Ticket, TicketWithRelations } from '../types/database'
 
 const TICKET_SELECT =
-  '*, category:categories(*), requester:requesters(*), assignee:profiles!tickets_assigned_to_fkey(*), project:projects(*)'
+  '*, category:categories(*), requester:requesters(*), assignee:profiles!tickets_assigned_to_fkey(*), project:projects(*), asset:assets(*), supplier:suppliers(*)'
 
 export function useTickets() {
   return useQuery({

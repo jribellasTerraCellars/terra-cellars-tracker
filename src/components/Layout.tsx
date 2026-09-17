@@ -6,6 +6,8 @@ import logo from '../assets/logo.png'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Tauler' },
+  { to: '/actius', label: 'Actius' },
+  { to: '/operacions', label: 'Backups i proveïdors' },
   { to: '/estadistiques', label: 'Estadístiques' },
   { to: '/configuracio', label: 'Configuració' },
 ]

@@ -3,6 +3,22 @@ export type TicketPriority = 'baixa' | 'mitjana' | 'alta' | 'urgent'
 export type TicketStatus = 'pendent' | 'en_curs' | 'bloquejat' | 'fet' | 'cancelat'
 export type ProfileRole = 'admin' | 'tecnic'
 export type ProjectStatus = 'actiu' | 'pausat' | 'tancat'
+export type EmploymentStatus = 'actiu' | 'baixa' | 'alta_en_proces' | 'baixa_en_proces'
+export type AssetType =
+  | 'servidor'
+  | 'pc'
+  | 'impressora'
+  | 'nvr'
+  | 'switch'
+  | 'router'
+  | 'punt_acces'
+  | 'firewall'
+  | 'altres'
+export type AssetStatus = 'actiu' | 'en_reparacio' | 'de_baixa' | 'en_estoc'
+export type BackupFrequency = 'diaria' | 'setmanal' | 'mensual'
+export type BackupType = 'complet' | 'incremental'
+export type BackupLastStatus = 'exit' | 'error' | 'pendent'
+export type SupplierCategory = 'isp' | 'manteniment_hardware' | 'software' | 'neteja' | 'seguretat' | 'altres'
 
 export interface Profile {
   id: string
@@ -18,6 +34,11 @@ export interface Requester {
   name: string
   department: string | null
   active: boolean
+  position: string | null
+  ad_username: string | null
+  start_date: string | null
+  end_date: string | null
+  employment_status: EmploymentStatus
   created_at: string
 }
 
@@ -35,6 +56,61 @@ export interface Project {
   created_at: string
 }
 
+export interface Asset {
+  id: string
+  name: string
+  type: AssetType
+  brand: string | null
+  model: string | null
+  serial_number: string | null
+  location: string | null
+  status: AssetStatus
+  ip_address: string | null
+  vlan: string | null
+  purchase_date: string | null
+  warranty_until: string | null
+  assigned_to: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface AssetWithRelations extends Asset {
+  assignee: Requester | null
+}
+
+export interface BackupJob {
+  id: string
+  name: string
+  asset_id: string | null
+  frequency: BackupFrequency
+  backup_type: BackupType
+  destination: string | null
+  last_success_at: string | null
+  last_status: BackupLastStatus
+  retention_notes: string | null
+  responsible: string | null
+  created_at: string
+}
+
+export interface BackupJobWithRelations extends BackupJob {
+  asset: Asset | null
+  responsible_requester: Requester | null
+}
+
+export interface Supplier {
+  id: string
+  name: string
+  category: SupplierCategory
+  contact_name: string | null
+  phone: string | null
+  email: string | null
+  contract_start: string | null
+  contract_end: string | null
+  renewal_notice_days: number | null
+  notes: string | null
+  created_at: string
+}
+
 export interface Ticket {
   id: string
   title: string
@@ -46,6 +122,9 @@ export interface Ticket {
   project_id: string | null
   requester_id: string | null
   assigned_to: string | null
+  asset_id: string | null
+  supplier_id: string | null
+  backup_job_id: string | null
   due_date: string | null
   planned_date: string | null
   estimated_minutes: number | null
@@ -61,43 +140,6 @@ export interface TicketWithRelations extends Ticket {
   requester: Requester | null
   assignee: Profile | null
   project: Project | null
-}
-
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: Profile
-        Insert: Partial<Profile> & { id: string; email: string; full_name: string }
-        Update: Partial<Profile>
-        Relationships: []
-      }
-      requesters: {
-        Row: Requester
-        Insert: Partial<Requester> & { name: string }
-        Update: Partial<Requester>
-        Relationships: []
-      }
-      categories: {
-        Row: Category
-        Insert: Partial<Category> & { name: string }
-        Update: Partial<Category>
-        Relationships: []
-      }
-      projects: {
-        Row: Project
-        Insert: Partial<Project> & { name: string }
-        Update: Partial<Project>
-        Relationships: []
-      }
-      tickets: {
-        Row: Ticket
-        Insert: Partial<Ticket> & { title: string }
-        Update: Partial<Ticket>
-        Relationships: []
-      }
-    }
-    Views: Record<string, never>
-    Functions: Record<string, never>
-  }
+  asset: Asset | null
+  supplier: Supplier | null
 }
