@@ -8,6 +8,7 @@ import { Stats } from './pages/Stats'
 import { Settings } from './pages/Settings'
 import { Assets } from './pages/Assets'
 import { Operations } from './pages/Operations'
+import { Documentation } from './pages/Documentation'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth()
@@ -52,6 +53,14 @@ export default function App() {
         element={
           <RequireAuth>
             <Operations />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/documentacio"
+        element={
+          <RequireAuth>
+            <Documentation />
           </RequireAuth>
         }
       />

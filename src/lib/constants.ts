@@ -5,6 +5,7 @@ import type {
   BackupLastStatus,
   BackupType,
   EmploymentStatus,
+  MapPinType,
   SupplierCategory,
   TicketPriority,
   TicketStatus,
@@ -122,3 +123,51 @@ export const SUPPLIER_CATEGORY_ORDER: SupplierCategory[] = [
   'seguretat',
   'altres',
 ]
+
+export const PIN_TYPE_LABELS: Record<MapPinType, string> = {
+  camera: 'Càmera',
+  switch: 'Switch',
+  rack: 'Rack',
+  ethernet: 'Presa Ethernet',
+  wifi: 'Punt WiFi',
+  taula: 'Taula',
+  isp: 'Proveïdor ISP',
+  cablejat: 'Cablejat',
+  altres: 'Altres',
+}
+
+export const PIN_TYPE_ORDER: MapPinType[] = [
+  'camera',
+  'switch',
+  'rack',
+  'ethernet',
+  'wifi',
+  'taula',
+  'isp',
+  'cablejat',
+  'altres',
+]
+
+export const PIN_TYPE_SHORT: Record<MapPinType, string> = {
+  camera: 'C',
+  switch: 'S',
+  rack: 'R',
+  ethernet: 'E',
+  wifi: 'W',
+  taula: 'T',
+  isp: 'I',
+  cablejat: 'X',
+  altres: 'A',
+}
+
+export const PIN_TYPE_COLORS: Record<MapPinType, string> = {
+  camera: '#B3261E',
+  switch: '#2563A6',
+  rack: '#5C1F2E',
+  ethernet: '#2F7D4F',
+  wifi: '#B7791F',
+  taula: '#656D76',
+  isp: '#2F6F5E',
+  cablejat: '#2B3A45',
+  altres: '#8A8F98',
+}

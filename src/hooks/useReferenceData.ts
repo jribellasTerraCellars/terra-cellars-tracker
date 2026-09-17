@@ -71,6 +71,18 @@ export function useCreateCategory() {
   })
 }
 
+export function useUpdateCategory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, changes }: { id: string; changes: Partial<Category> }) => {
+      const { data, error } = await supabase.from('categories').update(changes).eq('id', id).select().single()
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  })
+}
+
 export function useDeleteCategory() {
   const queryClient = useQueryClient()
   return useMutation({

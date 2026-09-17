@@ -46,6 +46,7 @@ export interface Category {
   id: string
   name: string
   color: string
+  description: string | null
 }
 
 export interface Project {
@@ -142,4 +143,29 @@ export interface TicketWithRelations extends Ticket {
   project: Project | null
   asset: Asset | null
   supplier: Supplier | null
+}
+
+export type MapPinType = 'camera' | 'switch' | 'rack' | 'ethernet' | 'wifi' | 'taula' | 'isp' | 'cablejat' | 'altres'
+
+export interface FloorPlan {
+  id: string
+  name: string
+  storage_path: string
+  created_at: string
+}
+
+export interface MapPin {
+  id: string
+  floor_plan_id: string
+  type: MapPinType
+  label: string
+  x_percent: number
+  y_percent: number
+  asset_id: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface MapPinWithRelations extends MapPin {
+  asset: Asset | null
 }
