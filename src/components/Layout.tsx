@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { Avatar } from './Avatar'
 import logo from '../assets/logo.png'
 
 const NAV_ITEMS = [
@@ -58,9 +59,12 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="mt-6 flex items-center justify-between border-t border-[var(--color-border)] pt-4 md:mt-0">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{profile?.full_name ?? '...'}</p>
-            <p className="truncate text-xs text-[var(--color-text-muted)]">{profile?.email}</p>
+          <div className="flex min-w-0 items-center gap-2">
+            <Avatar name={profile?.full_name} size="md" />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{profile?.full_name ?? '...'}</p>
+              <p className="truncate text-xs text-[var(--color-text-muted)]">{profile?.email}</p>
+            </div>
           </div>
           <button
             onClick={handleSignOut}

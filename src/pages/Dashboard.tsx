@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { useTickets, useUpdateTicket } from '../hooks/useTickets'
 import { KanbanBoard } from '../components/KanbanBoard'
 import { TicketModal } from '../components/TicketModal'
+import { Avatar } from '../components/Avatar'
 import { PRIORITY_LABELS, STATUS_LABELS, TYPE_LABELS } from '../lib/constants'
 import type { TicketStatus, TicketWithRelations } from '../types/database'
 
@@ -112,6 +113,7 @@ function ClosedTicketsTable({
             <th className="px-4 py-2 font-medium">Prioritat</th>
             <th className="px-4 py-2 font-medium">Estat</th>
             <th className="px-4 py-2 font-medium">Sol·licitat per</th>
+            <th className="px-4 py-2 font-medium">Assignat</th>
             <th className="px-4 py-2 font-medium">Tancat el</th>
           </tr>
         </thead>
@@ -123,6 +125,9 @@ function ClosedTicketsTable({
               <td className="px-4 py-2 text-[var(--color-text-muted)]">{PRIORITY_LABELS[ticket.priority]}</td>
               <td className="px-4 py-2 text-[var(--color-text-muted)]">{STATUS_LABELS[ticket.status]}</td>
               <td className="px-4 py-2 text-[var(--color-text-muted)]">{ticket.requester?.name ?? '—'}</td>
+              <td className="px-4 py-2">
+                <Avatar name={ticket.assignee?.full_name} size="xs" />
+              </td>
               <td className="px-4 py-2 text-[var(--color-text-muted)]">
                 {ticket.completed_at ? new Date(ticket.completed_at).toLocaleDateString('ca-ES') : '—'}
               </td>

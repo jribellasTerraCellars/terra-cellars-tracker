@@ -5,20 +5,100 @@ import {
   useCreateRequester,
   useDeleteCategory,
   useDeleteRequester,
+  useProfiles,
   useRequesters,
   useUpdateCategory,
+  useUpdateProfile,
   useUpdateRequester,
 } from '../hooks/useReferenceData'
+import { Avatar } from '../components/Avatar'
 import { EMPLOYMENT_STATUS_LABELS, EMPLOYMENT_STATUS_ORDER } from '../lib/constants'
-import type { Category, EmploymentStatus, Requester } from '../types/database'
+import type { Category, EmploymentStatus, Profile, Requester } from '../types/database'
 
 export function Settings() {
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-xl font-semibold">Configuració</h1>
+      <ProfilesPanel />
       <RequestersPanel />
       <CategoriesPanel />
     </div>
+  )
+}
+
+function ProfilesPanel() {
+  const { data: profiles } = useProfiles()
+  const updateProfile = useUpdateProfile()
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [name, setName] = useState('')
+
+  const startEditing = (profile: Profile) => {
+    setEditingId(profile.id)
+    setName(profile.full_name)
+  }
+
+  const handleSave = async (id: string) => {
+    if (!name.trim()) return
+    await updateProfile.mutateAsync({ id, full_name: name.trim() })
+    setEditingId(null)
+  }
+
+  return (
+    <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <h2 className="mb-1 text-sm font-semibold">Usuaris de l'equip IT</h2>
+      <p className="mb-4 text-xs text-[var(--color-text-muted)]">
+        Persones amb accés a l'aplicació. Edita el nom mostrat si cal.
+      </p>
+
+      <ul className="flex flex-col divide-y divide-[var(--color-border)]">
+        {profiles?.map((p) => (
+          <li key={p.id} className="flex items-center justify-between gap-2 py-2 text-sm">
+            <div className="flex min-w-0 items-center gap-2">
+              <Avatar name={p.full_name} size="md" />
+              {editingId === p.id ? (
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoFocus
+                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-sm outline-none focus:border-[var(--color-primary)]"
+                />
+              ) : (
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{p.full_name}</p>
+                  <p className="truncate text-xs text-[var(--color-text-muted)]">{p.email}</p>
+                </div>
+              )}
+            </div>
+            <div className="flex shrink-0 items-center gap-3">
+              {editingId === p.id ? (
+                <>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  >
+                    Cancel·lar
+                  </button>
+                  <button
+                    onClick={() => handleSave(p.id)}
+                    disabled={!name.trim()}
+                    className="text-xs font-medium text-[var(--color-primary)] hover:underline disabled:opacity-60"
+                  >
+                    Desar
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => startEditing(p)}
+                  className="text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                >
+                  Editar
+                </button>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
