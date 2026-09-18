@@ -193,3 +193,10 @@ export interface MapPinPort {
 export interface MapPinPortWithPin extends MapPinPort {
   pin: Pick<MapPin, 'id' | 'label' | 'type'> | null
 }
+
+export interface UptimeDay {
+  day: string
+  checks_total: number
+  checks_up: number
+  updated_at: string
+}

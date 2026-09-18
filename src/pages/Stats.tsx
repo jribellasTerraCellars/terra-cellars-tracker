@@ -21,6 +21,7 @@ import {
 import { ca } from 'date-fns/locale'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useTickets } from '../hooks/useTickets'
+import { useUptimeDaily } from '../hooks/useUptime'
 import type { TicketWithRelations } from '../types/database'
 
 type Period = 'setmana' | 'mes' | 'any'
@@ -142,6 +143,40 @@ export function Stats() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      <UptimePanel />
+    </div>
+  )
+}
+
+function UptimePanel() {
+  const { data: days } = useUptimeDaily(14)
+
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <h2 className="mb-1 text-sm font-semibold">Uptime d'internet (últims 14 dies)</h2>
+      <p className="mb-4 text-xs text-[var(--color-text-muted)]">
+        Registrat per un agent propi dins la xarxa de l'oficina, sense dependre de cap servei extern.
+      </p>
+      {!days || days.length === 0 ? (
+        <p className="text-sm text-[var(--color-text-muted)]">
+          Encara no hi ha dades. Falta desplegar l'agent d'uptime a l'oficina.
+        </p>
+      ) : (
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={days.map((d) => ({
+            label: format(new Date(d.day), 'd MMM', { locale: ca }),
+            percent: d.checks_total > 0 ? Math.round((d.checks_up / d.checks_total) * 1000) / 10 : null,
+          }))}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+            <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} />
+            <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} unit="%" />
+            <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', fontSize: 12 }} />
+            <Bar dataKey="percent" name="Uptime" fill="var(--color-success)" radius={[3, 3, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </div>
   )
 }
