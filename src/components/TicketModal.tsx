@@ -111,7 +111,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="type">Tipus</label>
             <select id="type" value={type} onChange={(e) => setType(e.target.value as TicketType)} className={inputClass}>
@@ -130,7 +130,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="status">Estat</label>
             <select id="status" value={status} onChange={(e) => setStatus(e.target.value as TicketStatus)} className={inputClass}>
@@ -150,7 +150,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="requester">Sol·licitat per</label>
             <select id="requester" value={requesterId} onChange={(e) => setRequesterId(e.target.value)} className={inputClass}>
@@ -174,7 +174,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="asset">Actiu relacionat</label>
             <select id="asset" value={assetId} onChange={(e) => setAssetId(e.target.value)} className={inputClass}>
@@ -205,7 +205,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="dueDate">Data límit</label>
             <input id="dueDate" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputClass} />
@@ -216,7 +216,7 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="estimatedMinutes">Temps estimat (min)</label>
             <input

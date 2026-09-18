@@ -83,7 +83,7 @@ export function BackupJobModal({ job, onClose }: { job?: BackupJobWithRelations;
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="frequency">Freqüència</label>
             <select id="frequency" value={frequency} onChange={(e) => setFrequency(e.target.value as BackupFrequency)} className={inputClass}>
@@ -107,7 +107,7 @@ export function BackupJobModal({ job, onClose }: { job?: BackupJobWithRelations;
           <input id="destination" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="Local / Cloud / Offsite" className={inputClass} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="lastStatus">Últim estat</label>
             <select id="lastStatus" value={lastStatus} onChange={(e) => setLastStatus(e.target.value as BackupLastStatus)} className={inputClass}>

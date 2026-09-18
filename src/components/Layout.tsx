@@ -38,7 +38,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          <nav className="flex gap-1 md:flex-col">
+          <nav className="flex flex-wrap gap-1 md:flex-col">
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}

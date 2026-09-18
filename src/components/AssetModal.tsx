@@ -79,7 +79,7 @@ export function AssetModal({ asset, onClose }: { asset?: AssetWithRelations; onC
           <input id="name" required value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="type">Tipus</label>
             <select id="type" value={type} onChange={(e) => setType(e.target.value as AssetType)} className={inputClass}>
@@ -98,7 +98,7 @@ export function AssetModal({ asset, onClose }: { asset?: AssetWithRelations; onC
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="brand">Marca</label>
             <input id="brand" value={brand} onChange={(e) => setBrand(e.target.value)} className={inputClass} />
@@ -109,7 +109,7 @@ export function AssetModal({ asset, onClose }: { asset?: AssetWithRelations; onC
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="serialNumber">Número de sèrie</label>
             <input id="serialNumber" value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} className={inputClass} />
@@ -120,7 +120,7 @@ export function AssetModal({ asset, onClose }: { asset?: AssetWithRelations; onC
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="ipAddress">IP</label>
             <input id="ipAddress" value={ipAddress} onChange={(e) => setIpAddress(e.target.value)} className={inputClass} />
@@ -141,7 +141,7 @@ export function AssetModal({ asset, onClose }: { asset?: AssetWithRelations; onC
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="purchaseDate">Data de compra</label>
             <input id="purchaseDate" type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} className={inputClass} />

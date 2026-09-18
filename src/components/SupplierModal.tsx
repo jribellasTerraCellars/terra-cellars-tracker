@@ -64,7 +64,7 @@ export function SupplierModal({ supplier, onClose }: { supplier?: Supplier; onCl
   return (
     <Modal title={isEditing ? 'Editar proveïdor' : 'Nou proveïdor'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="name">Nom</label>
             <input id="name" required value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -79,7 +79,7 @@ export function SupplierModal({ supplier, onClose }: { supplier?: Supplier; onCl
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="contactName">Persona de contacte</label>
             <input id="contactName" value={contactName} onChange={(e) => setContactName(e.target.value)} className={inputClass} />
@@ -95,7 +95,7 @@ export function SupplierModal({ supplier, onClose }: { supplier?: Supplier; onCl
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass} htmlFor="contractStart">Inici contracte</label>
             <input id="contractStart" type="date" value={contractStart} onChange={(e) => setContractStart(e.target.value)} className={inputClass} />
