@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
+import { Avatar } from './Avatar'
 import { useCreateTicket, useDeleteTicket, useUpdateTicket } from '../hooks/useTickets'
 import { useCategories, useProfiles, useRequesters } from '../hooks/useReferenceData'
 import { useAssets } from '../hooks/useAssets'
 import { useBackupJobs, useSuppliers } from '../hooks/useOperations'
+import { useCreateSubtask, useDeleteSubtask, useSubtasks, useToggleSubtask } from '../hooks/useSubtasks'
 import { PRIORITY_LABELS, STATUS_LABELS, STATUS_ORDER, TYPE_LABELS } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
 import type { TicketPriority, TicketStatus, TicketType, TicketWithRelations } from '../types/database'
@@ -160,12 +162,15 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
           <div>
             <label className={labelClass} htmlFor="assignee">Assignat a</label>
-            <select id="assignee" value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className={inputClass}>
-              <option value="">Sense assignar</option>
-              {profiles?.map((p) => (
-                <option key={p.id} value={p.id}>{p.full_name}</option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2">
+              <select id="assignee" value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className={inputClass}>
+                <option value="">Sense assignar</option>
+                {profiles?.map((p) => (
+                  <option key={p.id} value={p.id}>{p.full_name}</option>
+                ))}
+              </select>
+              {assignedTo && <Avatar name={profiles?.find((p) => p.id === assignedTo)?.full_name} size="md" />}
+            </div>
           </div>
         </div>
 
@@ -236,6 +241,8 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
           </div>
         </div>
 
+        {isEditing && ticket && <SubtasksPanel ticketId={ticket.id} />}
+
         {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
 
         <div className="mt-2 flex items-center justify-between">
@@ -269,5 +276,79 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
         </div>
       </form>
     </Modal>
+  )
+}
+
+function SubtasksPanel({ ticketId }: { ticketId: string }) {
+  const { data: subtasks } = useSubtasks(ticketId)
+  const createSubtask = useCreateSubtask()
+  const toggleSubtask = useToggleSubtask()
+  const deleteSubtask = useDeleteSubtask()
+  const [title, setTitle] = useState('')
+
+  const handleAdd = async () => {
+    if (!title.trim()) return
+    await createSubtask.mutateAsync({ ticketId, title: title.trim(), position: subtasks?.length ?? 0 })
+    setTitle('')
+  }
+
+  const done = subtasks?.filter((s) => s.is_done).length ?? 0
+
+  return (
+    <div className="rounded-md border border-[var(--color-border)] p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xs font-medium text-[var(--color-text-muted)]">Subtasques</span>
+        {subtasks && subtasks.length > 0 && (
+          <span className="text-xs text-[var(--color-text-muted)]">{done}/{subtasks.length}</span>
+        )}
+      </div>
+
+      {subtasks && subtasks.length > 0 && (
+        <ul className="mb-2 flex flex-col gap-1">
+          {subtasks.map((s) => (
+            <li key={s.id} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={s.is_done}
+                onChange={(e) => toggleSubtask.mutate({ id: s.id, is_done: e.target.checked })}
+                className="h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+              />
+              <span className={`flex-1 ${s.is_done ? 'text-[var(--color-text-muted)] line-through' : ''}`}>{s.title}</span>
+              <button
+                type="button"
+                onClick={() => deleteSubtask.mutate(s)}
+                className="shrink-0 rounded px-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-danger)]"
+                aria-label={`Eliminar ${s.title}`}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex gap-2">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              handleAdd()
+            }
+          }}
+          placeholder="Afegir subtasca..."
+          className="flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 text-sm outline-none focus:border-[var(--color-primary)]"
+        />
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!title.trim() || createSubtask.isPending}
+          className="rounded-md border border-[var(--color-border)] px-2 py-1.5 text-xs font-medium hover:bg-[var(--color-surface-alt)] disabled:opacity-60"
+        >
+          Afegir
+        </button>
+      </div>
+    </div>
   )
 }

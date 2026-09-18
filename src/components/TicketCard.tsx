@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core'
+import { Avatar } from './Avatar'
 import { PRIORITY_LABELS, PRIORITY_STYLES, TYPE_LABELS } from '../lib/constants'
 import type { TicketWithRelations } from '../types/database'
 
@@ -26,9 +27,12 @@ export function TicketCard({ ticket, onClick }: { ticket: TicketWithRelations; o
         <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--color-text-muted)]">
           {TYPE_LABELS[ticket.type]}
         </span>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${PRIORITY_STYLES[ticket.priority]}`}>
-          {PRIORITY_LABELS[ticket.priority]}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${PRIORITY_STYLES[ticket.priority]}`}>
+            {PRIORITY_LABELS[ticket.priority]}
+          </span>
+          <Avatar name={ticket.assignee?.full_name} size="xs" />
+        </div>
       </div>
       <p className="mb-2 text-sm font-medium leading-snug">{ticket.title}</p>
       <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
@@ -43,6 +47,9 @@ export function TicketCard({ ticket, onClick }: { ticket: TicketWithRelations; o
         {ticket.requester && <span>· {ticket.requester.name}</span>}
         {ticket.asset && <span>· {ticket.asset.name}</span>}
         {ticket.due_date && <span>· venç {ticket.due_date}</span>}
+        {ticket.subtasks.length > 0 && (
+          <span>· {ticket.subtasks.filter((s) => s.is_done).length}/{ticket.subtasks.length} subtasques</span>
+        )}
       </div>
     </div>
   )

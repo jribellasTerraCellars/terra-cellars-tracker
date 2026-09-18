@@ -136,6 +136,15 @@ export interface Ticket {
   completed_at: string | null
 }
 
+export interface TicketSubtask {
+  id: string
+  ticket_id: string
+  title: string
+  is_done: boolean
+  position: number
+  created_at: string
+}
+
 export interface TicketWithRelations extends Ticket {
   category: Category | null
   requester: Requester | null
@@ -143,6 +152,7 @@ export interface TicketWithRelations extends Ticket {
   project: Project | null
   asset: Asset | null
   supplier: Supplier | null
+  subtasks: TicketSubtask[]
 }
 
 export type MapPinType = 'camera' | 'switch' | 'rack' | 'ethernet' | 'wifi' | 'taula' | 'isp' | 'cablejat' | 'altres'
@@ -168,4 +178,18 @@ export interface MapPin {
 
 export interface MapPinWithRelations extends MapPin {
   asset: Asset | null
+}
+
+export interface MapPinPort {
+  id: string
+  pin_id: string
+  port_label: string
+  connected_port_id: string | null
+  vlan: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface MapPinPortWithPin extends MapPinPort {
+  pin: Pick<MapPin, 'id' | 'label' | 'type'> | null
 }
