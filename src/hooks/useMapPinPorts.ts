@@ -39,10 +39,10 @@ function invalidatePorts(queryClient: ReturnType<typeof useQueryClient>, pinId: 
 export function useCreatePinPort() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ pinId, portLabel, vlan, notes }: { pinId: string; portLabel: string; vlan?: string; notes?: string }) => {
+    mutationFn: async ({ pinId, portLabel, vlan }: { pinId: string; portLabel: string; vlan?: string }) => {
       const { data, error } = await supabase
         .from('map_pin_ports')
-        .insert({ pin_id: pinId, port_label: portLabel, vlan: vlan || null, notes: notes || null })
+        .insert({ pin_id: pinId, port_label: portLabel, vlan: vlan || null })
         .select()
         .single()
       if (error) throw error

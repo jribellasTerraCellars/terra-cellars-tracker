@@ -10,11 +10,10 @@ function colorFor(seed: string) {
 
 const SIZE_CLASSES = {
   xs: 'h-5 w-5 text-[10px]',
-  sm: 'h-6 w-6 text-[11px]',
   md: 'h-9 w-9 text-sm',
 }
 
-export function Avatar({ name, size = 'sm' }: { name?: string | null; size?: keyof typeof SIZE_CLASSES }) {
+export function Avatar({ name, size = 'xs' }: { name?: string | null; size?: keyof typeof SIZE_CLASSES }) {
   const trimmed = name?.trim()
   const initial = trimmed ? trimmed[0].toUpperCase() : '?'
   const color = colorFor(trimmed || '?')
