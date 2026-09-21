@@ -1,5 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
+import { makeCrud } from '../lib/makeCrud'
 import type { BackupJob, BackupJobWithRelations, Supplier } from '../types/database'
 
 const BACKUP_SELECT = '*, asset:assets(*), responsible_requester:requesters(*)'
@@ -15,40 +16,10 @@ export function useBackupJobs() {
   })
 }
 
-export function useCreateBackupJob() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (job: Partial<BackupJob> & { name: string }) => {
-      const { data, error } = await supabase.from('backup_jobs').insert(job).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['backup_jobs'] }),
-  })
-}
-
-export function useUpdateBackupJob() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, changes }: { id: string; changes: Partial<BackupJob> }) => {
-      const { data, error } = await supabase.from('backup_jobs').update(changes).eq('id', id).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['backup_jobs'] }),
-  })
-}
-
-export function useDeleteBackupJob() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('backup_jobs').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['backup_jobs'] }),
-  })
-}
+const backupJobs = makeCrud<BackupJob>('backup_jobs', 'backup_jobs')
+export const useCreateBackupJob = backupJobs.useCreate
+export const useUpdateBackupJob = backupJobs.useUpdate
+export const useDeleteBackupJob = backupJobs.useDelete
 
 export function useSuppliers() {
   return useQuery({
@@ -61,37 +32,7 @@ export function useSuppliers() {
   })
 }
 
-export function useCreateSupplier() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (supplier: Partial<Supplier> & { name: string }) => {
-      const { data, error } = await supabase.from('suppliers').insert(supplier).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
-  })
-}
-
-export function useUpdateSupplier() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, changes }: { id: string; changes: Partial<Supplier> }) => {
-      const { data, error } = await supabase.from('suppliers').update(changes).eq('id', id).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
-  })
-}
-
-export function useDeleteSupplier() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('suppliers').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
-  })
-}
+const suppliers = makeCrud<Supplier>('suppliers', 'suppliers')
+export const useCreateSupplier = suppliers.useCreate
+export const useUpdateSupplier = suppliers.useUpdate
+export const useDeleteSupplier = suppliers.useDelete

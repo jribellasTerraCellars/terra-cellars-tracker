@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
+import { makeCrud } from '../lib/makeCrud'
 import type { MapPinPort, MapPinPortWithPin } from '../types/database'
 
 const PORT_SELECT = '*, pin:map_pins(id, label, type)'
@@ -52,17 +53,11 @@ export function useCreatePinPort() {
   })
 }
 
-export function useDeletePinPort() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (port: MapPinPort) => {
-      const { error } = await supabase.from('map_pin_ports').delete().eq('id', port.id)
-      if (error) throw error
-      return port
-    },
-    onSuccess: (port) => invalidatePorts(queryClient, port.pin_id),
-  })
-}
+const pinPorts = makeCrud<MapPinPort>('map_pin_ports', 'map_pin_ports', (port) => [
+  ['map_pin_ports', port.pin_id],
+  ['map_pin_ports_all'],
+])
+export const useDeletePinPort = pinPorts.useDeleteRow
 
 export function useConnectPorts() {
   const queryClient = useQueryClient()

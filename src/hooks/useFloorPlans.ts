@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
+import { makeCrud } from '../lib/makeCrud'
 import type { FloorPlan, MapPin, MapPinWithRelations } from '../types/database'
 
 const BUCKET = 'floor-plans'
@@ -74,38 +75,10 @@ export function useMapPins(floorPlanId: string | undefined) {
   })
 }
 
-export function useCreateMapPin() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (pin: Partial<MapPin> & { floor_plan_id: string; label: string; x_percent: number; y_percent: number }) => {
-      const { data, error } = await supabase.from('map_pins').insert(pin).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: (_, variables) => queryClient.invalidateQueries({ queryKey: ['map_pins', variables.floor_plan_id] }),
-  })
-}
-
-export function useUpdateMapPin() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, changes }: { id: string; changes: Partial<MapPin> }) => {
-      const { data, error } = await supabase.from('map_pins').update(changes).eq('id', id).select().single()
-      if (error) throw error
-      return data as MapPin
-    },
-    onSuccess: (data) => queryClient.invalidateQueries({ queryKey: ['map_pins', data.floor_plan_id] }),
-  })
-}
-
-export function useDeleteMapPin() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (pin: MapPin) => {
-      const { error } = await supabase.from('map_pins').delete().eq('id', pin.id)
-      if (error) throw error
-      return pin
-    },
-    onSuccess: (pin) => queryClient.invalidateQueries({ queryKey: ['map_pins', pin.floor_plan_id] }),
-  })
-}
+const mapPins = makeCrud<
+  MapPin,
+  Partial<MapPin> & { floor_plan_id: string; label: string; x_percent: number; y_percent: number }
+>('map_pins', 'map_pins', (pin) => [['map_pins', pin.floor_plan_id]])
+export const useCreateMapPin = mapPins.useCreate
+export const useUpdateMapPin = mapPins.useUpdate
+export const useDeleteMapPin = mapPins.useDeleteRow

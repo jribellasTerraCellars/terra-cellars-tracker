@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
+import { makeCrud } from '../lib/makeCrud'
 import type { Category, Profile, Requester } from '../types/database'
 
 export function useRequesters() {
@@ -13,40 +14,10 @@ export function useRequesters() {
   })
 }
 
-export function useCreateRequester() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (requester: Partial<Requester> & { name: string }) => {
-      const { data, error } = await supabase.from('requesters').insert(requester).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['requesters'] }),
-  })
-}
-
-export function useUpdateRequester() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, changes }: { id: string; changes: Partial<Requester> }) => {
-      const { data, error } = await supabase.from('requesters').update(changes).eq('id', id).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['requesters'] }),
-  })
-}
-
-export function useDeleteRequester() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('requesters').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['requesters'] }),
-  })
-}
+const requesters = makeCrud<Requester>('requesters', 'requesters')
+export const useCreateRequester = requesters.useCreate
+export const useUpdateRequester = requesters.useUpdate
+export const useDeleteRequester = requesters.useDelete
 
 export function useCategories() {
   return useQuery({
@@ -59,40 +30,10 @@ export function useCategories() {
   })
 }
 
-export function useCreateCategory() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (category: Partial<Category> & { name: string }) => {
-      const { data, error } = await supabase.from('categories').insert(category).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
-  })
-}
-
-export function useUpdateCategory() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, changes }: { id: string; changes: Partial<Category> }) => {
-      const { data, error } = await supabase.from('categories').update(changes).eq('id', id).select().single()
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
-  })
-}
-
-export function useDeleteCategory() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('categories').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
-  })
-}
+const categories = makeCrud<Category>('categories', 'categories')
+export const useCreateCategory = categories.useCreate
+export const useUpdateCategory = categories.useUpdate
+export const useDeleteCategory = categories.useDelete
 
 export function useProfiles() {
   return useQuery({
