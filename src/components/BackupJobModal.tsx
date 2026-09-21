@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
+import { ModalFooter } from './ModalFooter'
 import { useCreateBackupJob, useDeleteBackupJob, useUpdateBackupJob } from '../hooks/useOperations'
 import { useAssets } from '../hooks/useAssets'
 import { useRequesters } from '../hooks/useReferenceData'
-import { BACKUP_FREQUENCY_LABELS, BACKUP_STATUS_LABELS, BACKUP_TYPE_LABELS } from '../lib/constants'
+import { BACKUP_FREQUENCY_LABELS, BACKUP_STATUS_LABELS, BACKUP_TYPE_LABELS, inputClass, labelClass } from '../lib/constants'
 import type { BackupFrequency, BackupJobWithRelations, BackupLastStatus, BackupType } from '../types/database'
 
 export function BackupJobModal({ job, onClose }: { job?: BackupJobWithRelations; onClose: () => void }) {
@@ -53,17 +54,6 @@ export function BackupJobModal({ job, onClose }: { job?: BackupJobWithRelations;
       setError('No s\'ha pogut desar el backup. Torna-ho a provar.')
     }
   }
-
-  const handleDelete = async () => {
-    if (!job) return
-    if (!confirm('Segur que vols eliminar aquest backup?')) return
-    await deleteJob.mutateAsync(job.id)
-    onClose()
-  }
-
-  const inputClass =
-    'w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)]'
-  const labelClass = 'mb-1 block text-xs font-medium text-[var(--color-text-muted)]'
 
   return (
     <Modal title={isEditing ? 'Editar backup' : 'Nou backup'} onClose={onClose}>
@@ -139,31 +129,12 @@ export function BackupJobModal({ job, onClose }: { job?: BackupJobWithRelations;
 
         {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
 
-        <div className="mt-2 flex items-center justify-between">
-          {isEditing ? (
-            <button type="button" onClick={handleDelete} className="text-sm font-medium text-[var(--color-danger)] hover:underline">
-              Eliminar
-            </button>
-          ) : (
-            <span />
-          )}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-medium hover:bg-[var(--color-surface-alt)]"
-            >
-              Cancel·lar
-            </button>
-            <button
-              type="submit"
-              disabled={createJob.isPending || updateJob.isPending}
-              className="rounded-md bg-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[var(--color-primary-contrast)] hover:opacity-90 disabled:opacity-60"
-            >
-              Desar
-            </button>
-          </div>
-        </div>
+        <ModalFooter
+          onClose={onClose}
+          saving={createJob.isPending || updateJob.isPending}
+          onDelete={job ? () => deleteJob.mutateAsync(job.id) : undefined}
+          confirmMessage="Segur que vols eliminar aquest backup?"
+        />
       </form>
     </Modal>
   )

@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
+import { ModalFooter } from './ModalFooter'
 import { Avatar } from './Avatar'
 import { useCreateTicket, useDeleteTicket, useUpdateTicket } from '../hooks/useTickets'
 import { useCategories, useProfiles, useRequesters } from '../hooks/useReferenceData'
 import { useAssets } from '../hooks/useAssets'
 import { useBackupJobs, useSuppliers } from '../hooks/useOperations'
 import { useCreateSubtask, useDeleteSubtask, useSubtasks, useToggleSubtask } from '../hooks/useSubtasks'
-import { PRIORITY_LABELS, STATUS_LABELS, STATUS_ORDER, TYPE_LABELS } from '../lib/constants'
+import { PRIORITY_LABELS, STATUS_LABELS, STATUS_ORDER, TYPE_LABELS, inputClass, labelClass } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
 import type { TicketPriority, TicketStatus, TicketType, TicketWithRelations } from '../types/database'
 
@@ -80,17 +81,6 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
       setError('No s\'ha pogut desar el ticket. Torna-ho a provar.')
     }
   }
-
-  const handleDelete = async () => {
-    if (!ticket) return
-    if (!confirm('Segur que vols eliminar aquest ticket?')) return
-    await deleteTicket.mutateAsync(ticket.id)
-    onClose()
-  }
-
-  const inputClass =
-    'w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)]'
-  const labelClass = 'mb-1 block text-xs font-medium text-[var(--color-text-muted)]'
 
   return (
     <Modal title={isEditing ? 'Editar ticket' : 'Nou ticket'} onClose={onClose}>
@@ -245,35 +235,12 @@ export function TicketModal({ ticket, defaultStatus, onClose }: TicketModalProps
 
         {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
 
-        <div className="mt-2 flex items-center justify-between">
-          {isEditing ? (
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-sm font-medium text-[var(--color-danger)] hover:underline"
-            >
-              Eliminar
-            </button>
-          ) : (
-            <span />
-          )}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-medium hover:bg-[var(--color-surface-alt)]"
-            >
-              Cancel·lar
-            </button>
-            <button
-              type="submit"
-              disabled={createTicket.isPending || updateTicket.isPending}
-              className="rounded-md bg-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[var(--color-primary-contrast)] hover:opacity-90 disabled:opacity-60"
-            >
-              Desar
-            </button>
-          </div>
-        </div>
+        <ModalFooter
+          onClose={onClose}
+          saving={createTicket.isPending || updateTicket.isPending}
+          onDelete={ticket ? () => deleteTicket.mutateAsync(ticket.id) : undefined}
+          confirmMessage="Segur que vols eliminar aquest ticket?"
+        />
       </form>
     </Modal>
   )

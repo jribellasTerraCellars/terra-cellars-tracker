@@ -171,3 +171,7 @@ export const PIN_TYPE_COLORS: Record<MapPinType, string> = {
   cablejat: '#2B3A45',
   altres: '#8A8F98',
 }
+
+export const inputClass =
+  'w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)]'
+export const labelClass = 'mb-1 block text-xs font-medium text-[var(--color-text-muted)]'
