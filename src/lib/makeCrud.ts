@@ -4,6 +4,7 @@ import { supabase } from './supabaseClient'
 export type NewRow<T> = Partial<T> & { name: string }
 
 // keysFor: query keys to refresh for a given row (default: the whole table key).
+// ponytail: TNew defaults to NewRow<T> (requires `name`); pass an explicit TNew for tables without it (e.g. map_pin_ports) when a hook needs create.
 export function makeCrud<T extends { id: string }, TNew = NewRow<T>>(
   table: string,
   key: string,
@@ -42,6 +43,7 @@ export function makeCrud<T extends { id: string }, TNew = NewRow<T>>(
         onSuccess: (row) => refresh(keysFor(row)),
       })
     },
+    // ponytail: useDelete ignores keysFor (only refreshes [key]); use useDeleteRow for scoped/composite keys, or make it honour keysFor when a new hook needs id-based delete with them.
     useDelete() {
       const refresh = useRefresh()
       return useMutation({ mutationFn: remove, onSuccess: () => refresh([[key]]) })
