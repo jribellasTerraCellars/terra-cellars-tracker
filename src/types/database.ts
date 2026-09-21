@@ -2,7 +2,6 @@ export type TicketType = 'tasca' | 'incidencia'
 export type TicketPriority = 'baixa' | 'mitjana' | 'alta' | 'urgent'
 export type TicketStatus = 'pendent' | 'en_curs' | 'bloquejat' | 'fet' | 'cancelat'
 export type ProfileRole = 'admin' | 'tecnic'
-export type ProjectStatus = 'actiu' | 'pausat' | 'tancat'
 export type EmploymentStatus = 'actiu' | 'baixa' | 'alta_en_proces' | 'baixa_en_proces'
 export type AssetType =
   | 'servidor'
@@ -47,14 +46,6 @@ export interface Category {
   name: string
   color: string
   description: string | null
-}
-
-export interface Project {
-  id: string
-  name: string
-  description: string | null
-  status: ProjectStatus
-  created_at: string
 }
 
 export interface Asset {
@@ -120,7 +111,6 @@ export interface Ticket {
   priority: TicketPriority
   status: TicketStatus
   category_id: string | null
-  project_id: string | null
   requester_id: string | null
   assigned_to: string | null
   asset_id: string | null
@@ -149,7 +139,6 @@ export interface TicketWithRelations extends Ticket {
   category: Category | null
   requester: Requester | null
   assignee: Profile | null
-  project: Project | null
   asset: Asset | null
   supplier: Supplier | null
   subtasks: TicketSubtask[]
